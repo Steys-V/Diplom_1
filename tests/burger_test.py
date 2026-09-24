@@ -8,60 +8,75 @@ class TestBurger:
     def test_set_buns_sets_correct_bun(self):
         burger = Burger()
         mock_bun = Mock()
-
         burger.set_buns(mock_bun)
         assert burger.bun == mock_bun
 
-    # 2. Тест добавления ингредиента
+    # 2. Тест добавления ингредиента — проверка наличия
     def test_add_ingredient_adds_to_list(self):
         burger = Burger()
         mock_ingredient = Mock()
-
         burger.add_ingredient(mock_ingredient)
         assert mock_ingredient in burger.ingredients
+
+    # 3. Тест добавления ингредиента — проверка длины списка
+    def test_add_ingredient_increases_list_length(self):
+        burger = Burger()
+        mock_ingredient = Mock()
+        burger.add_ingredient(mock_ingredient)
         assert len(burger.ingredients) == 1
 
-    # 3. Тест удаления ингредиента по индексу
+    # 4. Тест удаления ингредиента — проверка отсутствия
     def test_remove_ingredient_removes_from_list(self):
         burger = Burger()
         mock_ingredient = Mock()
-
         burger.add_ingredient(mock_ingredient)
         burger.remove_ingredient(0)
         assert mock_ingredient not in burger.ingredients
+
+    # 5. Тест удаления ингредиента — проверка длины
+    def test_remove_ingredient_decreases_list_length(self):
+        burger = Burger()
+        mock_ingredient = Mock()
+        burger.add_ingredient(mock_ingredient)
+        burger.remove_ingredient(0)
         assert len(burger.ingredients) == 0
 
-    # 4. Тест перемещения ингредиентов местами в списке
-    def test_move_ingredient_changes_position(self):
+    # 6. Тест перемещения ингредиентов — проверка первого элемента
+    def test_move_ingredient_first_position(self):
         burger = Burger()
         mock_ing_1 = Mock()
         mock_ing_2 = Mock()
-
         burger.add_ingredient(mock_ing_1)
         burger.add_ingredient(mock_ing_2)
-
-        # Перемещаем первый ингредиент на позицию второго
         burger.move_ingredient(0, 1)
         assert burger.ingredients[0] == mock_ing_2
+
+    # 7. Тест перемещения ингредиентов — проверка второго элемента
+    def test_move_ingredient_second_position(self):
+        burger = Burger()
+        mock_ing_1 = Mock()
+        mock_ing_2 = Mock()
+        burger.add_ingredient(mock_ing_1)
+        burger.add_ingredient(mock_ing_2)
+        burger.move_ingredient(0, 1)
         assert burger.ingredients[1] == mock_ing_1
 
-    # 5. Тест расчета стоимости (Используем моки с возвращаемыми значениями)
+    # 8. Тест расчета стоимости
     def test_get_price_calculates_total_cost(self):
         burger = Burger()
 
         mock_bun = Mock()
-        mock_bun.get_price.return_value = 100.0  # Цена булки 100
+        mock_bun.get_price.return_value = 100.0
 
         mock_ingredient = Mock()
-        mock_ingredient.get_price.return_value = 50.0  # Цена ингредиента 50
+        mock_ingredient.get_price.return_value = 50.0
 
         burger.set_buns(mock_bun)
         burger.add_ingredient(mock_ingredient)
 
-        # Расчет: (100 * 2) + 50 = 250
         assert burger.get_price() == 250.0
 
-    # 6. Тест печати чека (Мокаем методы булки и ингредиента для генерации текста)
+    # 9. Тест печати чека
     def test_get_receipt_returns_formatted_string(self):
         burger = Burger()
 
@@ -77,8 +92,12 @@ class TestBurger:
         burger.set_buns(mock_bun)
         burger.add_ingredient(mock_ingredient)
 
-        receipt = burger.get_receipt()
+        expected_receipt = (
+            "(==== Марсианская булка ====)\n"
+            "= sauce Chili =\n"
+            "(==== Марсианская булка ====)\n"
+            "\n"
+            "Price: 250.0"
+        )
 
-        assert "(==== Марсианская булка ====)" in receipt
-        assert "= sauce Chili =" in receipt
-        assert "Price: 250.0" in receipt
+        assert burger.get_receipt() == expected_receipt
